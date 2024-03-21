@@ -1,0 +1,28 @@
+<.header>
+  Cloth <%= @cloth.id %>
+  <:subtitle>This is a cloth record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/clothes/#{@cloth}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit cloth</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Name"><%= @cloth.name %></:item>
+  <:item title="Description"><%= @cloth.description %></:item>
+  <:item title="Unit price"><%= @cloth.unit_price %></:item>
+</.list>
+
+<.back navigate={~p"/clothes"}>Back to clothes</.back>
+
+<.modal :if={@live_action == :edit} id="cloth-modal" show on_cancel={JS.patch(~p"/clothes/#{@cloth}")}>
+  <.live_component
+    module={ShopWeb.ClothLive.FormComponent}
+    id={@cloth.id}
+    title={@page_title}
+    action={@live_action}
+    cloth={@cloth}
+    patch={~p"/clothes/#{@cloth}"}
+  />
+</.modal>

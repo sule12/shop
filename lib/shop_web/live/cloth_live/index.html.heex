@@ -1,0 +1,43 @@
+<.header>
+  Listing Clothes
+  <:actions>
+    <.link patch={~p"/clothes/new"}>
+      <.button>New Cloth</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="clothes"
+  rows={@streams.clothes}
+  row_click={fn {_id, cloth} -> JS.navigate(~p"/clothes/#{cloth}") end}
+>
+  <:col :let={{_id, cloth}} label="Name"><%= cloth.name %></:col>
+  <:col :let={{_id, cloth}} label="Description"><%= cloth.description %></:col>
+  <:col :let={{_id, cloth}} label="Unit price"><%= cloth.unit_price %></:col>
+  <:action :let={{_id, cloth}}>
+    <div class="sr-only">
+      <.link navigate={~p"/clothes/#{cloth}"}>Show</.link>
+    </div>
+    <.link patch={~p"/clothes/#{cloth}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, cloth}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: cloth.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="cloth-modal" show on_cancel={JS.patch(~p"/clothes")}>
+  <.live_component
+    module={ShopWeb.ClothLive.FormComponent}
+    id={@cloth.id || :new}
+    title={@page_title}
+    action={@live_action}
+    cloth={@cloth}
+    patch={~p"/clothes"}
+  />
+</.modal>
